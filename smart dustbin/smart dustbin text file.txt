@@ -1,0 +1,62 @@
+// Arduino Smart dustbin with lcd display
+//@mahfuzur rahman Kiron 
+//Coding Tips BD
+
+#include <LiquidCrystal_I2C.h>
+#define trigPin 9
+#define echoPin 8
+#define led1 7
+#include <Servo.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+int duration, distance;
+Servo s1;
+
+void setup() {
+  lcd.init();               // initialize the lcd
+  lcd.backlight();
+  pinMode(trigPin, OUTPUT); // config trigger pin to output mode
+  pinMode(echoPin, INPUT);
+  pinMode(led1, OUTPUT);
+  s1.attach(3); 
+  lcd.print("Arduino Home-made"); // lcd display print 
+  lcd.setCursor(0, 1); 
+  lcd.print(" Smart Dustbin(: ");
+  lcd.setCursor(0, 1);
+}
+
+void loop() {
+  
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH); 
+  distance=0.017 * duration;           // calculate the distance
+  lcd.print(distance);
+  
+  if (distance < 6) {   //fix the distance
+  lcd.clear();
+  lcd.print("  Dustbin open");
+  lcd.setCursor(0, 1);
+  lcd.print("Put your waste...");
+  lcd.setCursor(0, 1);
+  digitalWrite(led1,HIGH);       //led on
+  s1.write(0);  
+  delay(3000);  
+  s1.write(180); 
+  lcd.print("Arduino Home-made");
+  lcd.setCursor(0, 1); 
+  lcd.print("Smart Dustbin(: ");
+  lcd.setCursor(0, 1);
+}
+  else {
+    lcd.clear();
+    digitalWrite(led1,LOW);
+    lcd.print("Arduino Home-made");
+    lcd.setCursor(0, 1); 
+    lcd.print("Smart Dustbin(: ");
+    lcd.setCursor(0, 1);
+    delay(200);
+  }
+  delay(4000);
+}
+  
